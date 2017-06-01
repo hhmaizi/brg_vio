@@ -1,0 +1,15 @@
+<launch>
+   <!-- Set Up Groups for Multiple Instances of VIO                 -->
+   <!-- <group ns="turtlesim1">                                     -->
+   <!--    <node pkg="turtlesim" name="sim" type="turtlesim_node"/> -->
+   <!-- </group>                                                    -->
+   <!--                                                             -->
+   <!-- <group ns="turtlesim2">                                     -->
+   <!--    <node pkg="turtlesim" name="sim" type="turtlesim_node"/> -->
+   <!-- </group>                                                    -->
+
+   <node pkg="brg_vio" name="brg_vio" type="brg_vio_node" output="screen">
+
+   </node>
+
+</launch>
