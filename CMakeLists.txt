@@ -11,7 +11,12 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   roscpp
   roslib
+  image_transport
+  cv_bridge
 )
+
+# Add plain cmake packages 
+FIND_PACKAGE(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -103,7 +108,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+   DEPENDS OpenCV
+   CATKIN_DEPENDS roscpp image_transport cv_bridge
+   INCLUDE_DIRS include
 #  LIBRARIES vio
 #  CATKIN_DEPENDS cmake_modules roscpp roslib
 #  DEPENDS system_lib
@@ -118,6 +125,7 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -148,6 +156,7 @@ add_executable(brg_vio_node src/brg_vio.cpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(brg_vio_node
    ${catkin_LIBRARIES}
+   ${OpenCV_INCLUDE_DIRS}
 )
 
 #############
