@@ -26,6 +26,9 @@
 // Everything we need to publish and subscribe to images
 #include <image_transport/image_transport.h>	
 // Headers allow us to display images using OpenCV's simple GUI abilities
+#include "opencv2/core.hpp"
+#include "opencv2/features2d.hpp"
+#include "opencv2/xfeatures2d.hpp"
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
 /*---------------- End Includes ----------------*/
@@ -38,6 +41,8 @@
 
 /*----------------- Namespaces -----------------*/
 using namespace std;
+using namespace cv;
+using namespace cv::xfeatures2d;
 /*--------------- End Namespaces ---------------*/
 
 /*------------------ Pragmas -------------------*/
@@ -52,6 +57,33 @@ using namespace std;
 /*-----------------------------------------------------------------------------*/
 /*-------------------------------- Helpers ------------------------------------*/
 /*-----------------------------------------------------------------------------*/
+void drawFeatures(Mat& im1){
+
+	try
+	{
+		// Detecting keypoints using SURF
+		int minHessian = 400;
+
+		Ptr<SURF> detector = SURF::create( minHessian );
+
+		vector<KeyPoint> keypoints_1;
+	
+		detector->detect( im1, keypoints_1);
+
+		// Drawing Keypoints into im_kp1
+		Mat im_kp1;
+
+		ROS_INFO_STREAM("Detected Keypoints");
+
+		drawKeypoints( im1, keypoints_1, im_kp1, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
+		im1 = im_kp1;
+	}
+	catch (cv_bridge::Exception& e)
+	{
+		ROS_ERROR("ERROR, ERROR, ERROR!");
+	}
+}
+
 // This callback function will get called when a new image has arrived
 void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
@@ -59,8 +91,16 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 	// Then show it in a display window.
 	try
 	{
-		cv::imshow("view",cv_bridge::toCvShare(msg,"bgr8")->image);
+		
+		// Gets image from CV bridge and places it in "im1"
+		Mat im1 = cv_bridge::toCvShare(msg,"bgr8")->image;
+		
+		//Calls the featuring function and returns the images as a Mat
+		drawFeatures(im1);
+		
+		cv::imshow("view",im1);
 		cv::waitKey(30);
+		
 	}
 	catch (cv_bridge::Exception& e)
 	{
@@ -112,3 +152,4 @@ int main(int argc, char **argv)
 /*-----------------------------------------------------------------------------*/
 /*--------------------------------- End Main ----------------------------------*/
 /*-----------------------------------------------------------------------------*/
+
