@@ -1,0 +1,66 @@
+Selector: 3
+# 1 = AGAST, 2 = Akaze, 3 = Brisk, 4 = FastFeatureDetector, 5 = GoodFeaturesToTrack
+# 6 = Kaze, 7 = MSER, 8 = Orb, 9 = SIFT, 10 = SURF
+
+#AGAST Parameters
+agast_Threshold: 10
+agast_nonmaxSuppression: true
+agast_type: 3 #AgastFeatureDetector::OAST_9_16
+#Akaze Parameters
+akaze_descriptor_type: 5 #cv::AKAZE::DESCRIPTOR_MLDB
+akaze_descriptor_size: 0
+akaze_descriptor_channels: 3
+akaze_threshold: 0.001
+akaze_nOctaves: 4
+akaze_nOctaveLayers: 4
+akaze_diffusivity: 1 #cv::KAZE::DIFF_PM_G2
+#Brisk parameters
+brisk_Thresh1: 60
+brisk_Octaves: 4
+brisk_PatternScales: 1.0
+#FastFeatureDetector parameters
+ffd_Threshold: 10
+ffd_nonmaxSuppression: true
+ffd_type: 2 #FastFeatureDetector::TYPE_9_16
+#GFTT parameters
+gftt_maxCorners: 1000
+gftt_qualityLevel: 0.01
+gftt_minDistance: 1
+gftt_blockSize: 3
+gftt_useHarrisDetector: false
+gftt_k: 0.04
+#KAZE parameters
+kaze_extended: false
+kaze_upright: false
+kaze_threshold: 0.001
+kaze_nOctaves: 4
+kaze_nOctaveLayers: 4
+kaze_diffusivity: 1 #KAZE::DIFF_PM_G2
+#MSER parameters
+mser_delta: 5
+mser_min_area: 60
+mser_max_area: 14400
+mser_max_variation: 0.25
+mser_min_diversity: 0.2
+mser_max_evolution: 200
+mser_area_threshold: 1.01
+mser_min_margin: 0.003
+mser_edge_blur_size: 5
+#ORB parameters
+orb_nfeatures: 500
+orb_scaleFactor: 1.2
+orb_nlevels: 8
+orb_edgeTHreshold: 31
+orb_firstLevel: 0
+orb_WTA_K: 2
+orb_scoreType: 0 #ORB::HARRIS_SCORE
+orb_patchSize: 31
+orb_fastThreshold: 20
+#SIFT parameters
+sift_nfeatures: 0
+sift_nOctaveLayers: 3
+sift_contrastThreshold: 0.04
+sift_edgeThreshold: 10
+sift_sigma: 1.6
+#SURF parameters
+surf_minHessian: 400

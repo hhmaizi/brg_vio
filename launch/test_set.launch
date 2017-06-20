@@ -10,6 +10,8 @@
 
    <node pkg="brg_vio" name="brg_vio" type="brg_vio_node" output="screen">
 
+        <rosparam file="$(find brg_vio)/param/featureDetector.yaml" />
+
    </node>
 
 </launch>

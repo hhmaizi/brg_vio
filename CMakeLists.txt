@@ -124,14 +124,15 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/vio.cpp
-# )FIND_PACKAGE(catkin REQUIRED COMPONENTS 
+ add_library(detectFeature
+  src/detectFeature.cpp
+ )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -155,8 +156,10 @@ add_executable(brg_vio_node src/brg_vio.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(brg_vio_node
+  detectFeature
    ${catkin_LIBRARIES}
    ${OpenCV_INCLUDE_DIRS}
+   
 )
 
 #############
