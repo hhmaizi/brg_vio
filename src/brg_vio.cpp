@@ -20,9 +20,11 @@
 
 /*------------------ Includes ------------------*/
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 // Include the ROS C++ APIs
 #include "ros/ros.h"
+#include "geometry_msgs/TransformStamped.h"
 // Includes detectFeature Class
 #include "detectFeature.h"
 /*---------------- End Includes ----------------*/
@@ -33,6 +35,10 @@
 /*------------------ Classes -------------------*/
 // Initializes the detectFeature object detector for use in imageCallback and main
 detectFeature detector;
+// Set ground truth file
+FILE *myfile_vicon;
+// Set state estimate file
+FILE *myfile;
 /*---------------- End Classes -----------------*/
 
 /*----------------- Namespaces -----------------*/
@@ -77,12 +83,25 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 		// Displays im1 with the detected keypoints
 		cv::imshow("view", im1);
 		cv::waitKey(30);
+
+		// Save VIO state estimate to file
+		double timestamp;
+		timestamp = msg->header.stamp.toNSec()/1000000000.0;
+		fprintf(myfile,"%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",timestamp,0.0,0.0,0.0,0.0,0.0,0.0,1.0);
 		
 	}
 	catch (cv_bridge::Exception& e)
 	{
 		ROS_ERROR("Could not convert from '%s' to 'bgr8'.",msg->encoding.c_str());
 	}
+
+}
+
+void fireCallback(const geometry_msgs::TransformStamped::ConstPtr& msg)
+{
+	double timestamp;
+	timestamp = msg->header.stamp.toNSec()/1000000000.0;
+	fprintf(myfile_vicon,"%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",timestamp,msg->transform.translation.x,msg->transform.translation.y,msg->transform.translation.z,msg->transform.rotation.x,msg->transform.rotation.y,msg->transform.rotation.z,msg->transform.rotation.w);
 }
 /*-----------------------------------------------------------------------------*/
 /*------------------------------ End Helpers ----------------------------------*/
@@ -98,6 +117,11 @@ int main(int argc, char **argv)
 
 	// Define ROS nodes
 	ros::NodeHandle sub_camera;
+    ros::NodeHandle vicon_receiver;
+
+	// Open File to Save Results
+	myfile = fopen("/home/dave/Desktop/vio_results.txt","w");
+	myfile_vicon = fopen("/home/dave/Desktop/ground_truth.txt","w");
 
 	// Start the node resource managers (communication, time, etc)
 	ros::start();
@@ -114,6 +138,9 @@ int main(int argc, char **argv)
 	// Subscribe to the ROS cam0/image_raw topic
 	image_transport::ImageTransport it(sub_camera);
 	image_transport::Subscriber sub = it.subscribe("cam0/image_raw", 1, imageCallback);
+
+    // Save Vicon Data to file
+    ros::Subscriber vic_sub = vicon_receiver.subscribe("/vicon/firefly_sbx/firefly_sbx",1000, fireCallback);
 
 	// Broadcast a simple log message
 	ROS_INFO_STREAM("Hello, world!");
