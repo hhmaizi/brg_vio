@@ -158,8 +158,7 @@ add_executable(brg_vio_node src/brg_vio.cpp)
 target_link_libraries(brg_vio_node
   detectFeature
    ${catkin_LIBRARIES}
-   ${OpenCV_INCLUDE_DIRS}
-   
+#   ${OpenCV_INCLUDE_DIRS}  
 )
 
 #############
