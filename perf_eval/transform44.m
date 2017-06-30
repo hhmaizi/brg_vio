@@ -10,7 +10,7 @@ function [ T ] = transform44( p, q )
 q = [q(2); q(3); q(4); q(1)];
 
 
-T = [quat2dcm(q') p;
+T = [quat2dcm(q') p';
     zeros(1,3) 1];
 
 end

@@ -55,74 +55,27 @@ gt_sync_time = vio_time;
 
 % Set up time intervals so that we have a mimimum of 20 measurements and so
 % that we can compute 100 different RPEs
-dt_vec = linspace(0.1,(vio_time(end) - vio_time(1))/20,100);
+mincount = 20;
+dt_vec = linspace(0.1,(vio_time(end) - vio_time(1))-mincount,100);
 quant_25 = zeros(1,100);
 quant_med = zeros(1,100);
 quant_75 = zeros(1,100);
 %% Compute RPE for 100 different time spans
 for f = 1:1:100
-    %% Compute RPE assuming that we need a minimum of 20 measurements
-    dt = dt_vec(f);
-    % Compute the number of RPE calculations for time difference dt
-    intervals = floor((vio_time(end) - vio_time(1))/dt);
-    % Define a matrix of estimated state at dt time intervals
-    reducedvio_time = zeros(intervals,1);
-    reducedvio_position = zeros(3,intervals);
-    reducedvio_orientation = zeros(4,intervals);
-    % Define the initial state estimate
-    reducedvio_time(1) = vio_time(1);
-    reducedvio_position(:,1) = vio_position(1,:)';
-    reducedvio_orientation(:,1) = vio_orientation(1,:)';
-    % Define the rest of the reduced estimated state matrices
-    j = 1;
-    for i = 1:length(vio_time)
-        if (vio_time(i) - reducedvio_time(j)) >= dt
-            j = j + 1;
-            reducedvio_time(j) = vio_time(i);
-            reducedvio_position(:,j) = vio_position(i,:)';
-            reducedvio_orientation(:,j) = vio_orientation(i,:)';
-        end
-    end
-    reducedvio_time(j+1:end) = [];
-    reducedvio_position(:,j+1:end) = [];
-    reducedvio_orientation(:,j+1:end) = [];
-    
     %% Compute SE(3) transformation matrixces of the reduced state estimates
-    Traj_vio = zeros(4,4,length(reducedvio_time));
-    for i = 1:length(reducedvio_time)
-        Traj_vio(:,:,i) = transform44(reducedvio_position(:,i), reducedvio_orientation(:,i));
+    Traj_vio = zeros(4,4,length(vio_time));
+    for i = 1:length(vio_time)
+        Traj_vio(:,:,i) = transform44(vio_position(i,:), vio_orientation(i,:));
     end
-    
-    %% Define a matrix of ground truth at dt time intervals
-    reducedgt_time = zeros(intervals,1);
-    reducedgt_position = zeros(3,intervals);
-    reducedgt_orientation = zeros(4,intervals);
-    % Define the initial state estimate
-    reducedgt_time(1) = gt_sync_time(1);
-    reducedgt_position(:,1) = gt_sync_position(1,:)';
-    reducedgt_orientation(:,1) = gt_sync_orientation(1,:)';
-    % Define the rest of the reduced estimated state matrices
-    j = 1;
-    for i = 1:length(gt_sync_time)
-        if (gt_sync_time(i) - reducedgt_time(j)) >= dt
-            j = j + 1;
-            reducedgt_time(j) = gt_sync_time(i);
-            reducedgt_position(:,j) = gt_sync_position(i,:)';
-            reducedgt_orientation(:,j) = gt_sync_orientation(i,:)';
-        end
-    end
-    reducedgt_time(j+1:end) = [];
-    reducedgt_position(:,j+1:end) = [];
-    reducedgt_orientation(:,j+1:end) = [];
     
     %% Compute SE(3) transformation matrixces of the reduced ground truth
-    Traj_gt = zeros(4,4, length(reducedgt_time));
-    for i = 1:length(reducedgt_time)
-        Traj_gt(:,:,i) = transform44(reducedgt_position(:,i), reducedgt_orientation(:,i));
+    Traj_gt = zeros(4,4, length(gt_sync_time));
+    for i = 1:length(gt_sync_time)
+        Traj_gt(:,:,i) = transform44(gt_sync_position(i,:), gt_sync_orientation(i,:));
     end
-    
+
     %% Evaluation
-    [ rpe_eval ] = evaluate_trajectory( Traj_gt, Traj_vio, reducedvio_time );
+    [ rpe_eval ] = evaluate_trajectory( Traj_gt, Traj_vio, vio_time, dt_vec(f), mincount );
     
     % Compute and save quantiles of translation data
     quant_25(f) = quantile(rpe_eval(2,:),0.25);
@@ -131,7 +84,6 @@ for f = 1:1:100
 end
 
 %% Plotting
-
 figure(1)
 plot(dt_vec,quant_25,'--g',dt_vec,quant_med,'-b',dt_vec,quant_75,'--r')
 xlabel('RPE Time Span (sec)')

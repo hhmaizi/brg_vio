@@ -24,7 +24,7 @@ We evaluate performance using measure of the relative pose error (RPE) of the tr
 \begin{equation}
 	E_i = \left(Q_i^{-1}Q_{i+\Delta}\right)^{-1}\left(P_i^{-1}P_{i+\Delta}\right).
 \end{equation}
-Note that in our current implementation, RPE is computed without overlap. So, for example, if $\Delta=10$, then we compute RPE at 0, 10, 20, etc. In the future we should compute RPE with overlap. This code is currently in the $\texttt{perf\_eval}$ folder and is written in Matlab. When running the $\texttt{rpe\_main.m}$ script, one simply has to type the name of the ground truth and estimated pose files. The files must be moved into the $\texttt{perf\_eval}$ directory. Figure \ref{fig:exampleresult} show an example of the output of the performance evaluation script.
+This code is currently in the $\texttt{perf\_eval}$ folder and is written in Matlab. When running the $\texttt{rpe\_main.m}$ script, one simply has to type the name of the ground truth and estimated pose files. The files must be moved into the $\texttt{perf\_eval}$ directory. Figure \ref{fig:exampleresult} show an example of the output of the performance evaluation script.
 
 \begin{figure}
 	\centering

@@ -1,4 +1,4 @@
-function [ rpe_eval ] = evaluate_trajectory( traj_gt, traj_est, time_est )
+function [ rpe_eval ] = evaluate_trajectory( traj_gt, traj_est, time_est, dt, mincount )
 % Input:
 %           - traj_gt: 4by4byn matrix the ground truth trajectory
 %           - time_gt: time stamp of ground truth trajectory
@@ -11,10 +11,12 @@ function [ rpe_eval ] = evaluate_trajectory( traj_gt, traj_est, time_est )
 %           - rpe_eval: 3bym matrix row 1 is the time_est, row 2 is the
 %           translational error, row 3 is the rotational error.
     
-rpe_eval = zeros(3,length(time_est)-1);
-for i = 1:length(time_est)-1
+
+rpe_eval = zeros(3,length(time_est)-mincount);
+for i = 1:length(time_est)-mincount
+    index = find_closest_index(time_est,time_est(i)+dt);
     % Compute relative pose error at time step i
-    error44 = invSE3(invSE3(traj_est(:,:,i))*traj_est(:,:,i+1))*(invSE3(traj_gt(:,:,i))*traj_gt(:,:,i+1));
+    error44 = invSE3(invSE3(traj_est(:,:,i))*traj_est(:,:,index))*(invSE3(traj_gt(:,:,i))*traj_gt(:,:,index));
     % Compute norm of translation error
     trans = norm(error44(1:3,4));
     % Compute error in rotation as an angle
