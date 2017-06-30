@@ -19,6 +19,9 @@
 
 \subsection{Coordinate Systems}
 
+\subsection{A Note on Quaternion Conventions}
+Note that our VIO method uses the JPL convention for quaternions as opposed to Hamilton's convention. For more details regarding this convention, see \cite{Trawny:2005,Barfoot:2011,Wie:2008}. Our performance evaluation code requests the user to input the quaternion convention used for state estimation and for the ground truth. So, comparisons with of our VIO result with Hamilton-convention ground truth can be easily done. 
+
 \subsection{Peformance Evaluation}
 We evaluate performance using measure of the relative pose error (RPE) of the translational state estimate over 100 time intervals. Each interval will have at least 20 measurments of RPE. We then plot RPE as a function of the time interval at 25\%, 50\%, and 75\% quartiles. This RPE is computed as defined by  \cite{Sturm:2012}. Given a time interval $\Delta$, ground truth pose $Q\in SE(3)$, and estimated pose $P\in SE(3)$, at time step $i$ the RPE is computed as
 \begin{equation}

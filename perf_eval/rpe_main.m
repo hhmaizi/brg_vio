@@ -4,6 +4,8 @@
 % Input file names
 filename_gt = input('Enter name of ground truth file: ');
 filename_vio = input('Enter name of estimated pose file: ');
+gt_HorJPL = input('Enter 0 if quaternion for ground truth is in Hamilton notation and 1 if it is in JPL notation: ');
+vio_HorJPL = input('Enter 0 if quaternion for state estimate is in Hamilton notation and 1 if it is in JPL notation: ');
 
 % Read files
 gt_matrix = dlmread(filename_gt,'\t');
@@ -65,13 +67,13 @@ for f = 1:1:100
     %% Compute SE(3) transformation matrixces of the reduced state estimates
     Traj_vio = zeros(4,4,length(vio_time));
     for i = 1:length(vio_time)
-        Traj_vio(:,:,i) = transform44(vio_position(i,:), vio_orientation(i,:));
+        Traj_vio(:,:,i) = transform44(vio_position(i,:), vio_orientation(i,:)',vio_HorJPL);
     end
     
     %% Compute SE(3) transformation matrixces of the reduced ground truth
     Traj_gt = zeros(4,4, length(gt_sync_time));
     for i = 1:length(gt_sync_time)
-        Traj_gt(:,:,i) = transform44(gt_sync_position(i,:), gt_sync_orientation(i,:));
+        Traj_gt(:,:,i) = transform44(gt_sync_position(i,:), gt_sync_orientation(i,:)',gt_HorJPL);
     end
 
     %% Evaluation
